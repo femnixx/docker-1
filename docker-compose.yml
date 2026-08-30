@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+    web_server:
+        image: femnix/docker-web-project:latest
+        ports:
+            - "8000:80"
+        container_name: production_nginx
+        restart: always
+
+    monitoring_dashboard: 
+        image: grafana/grafana-oss:latest-ubuntu
+        container_name: grafana_monitoring_dashboard
+        ports:
+            - "3000:3000"
+        volumes: 
+            - grafana_storage:/var/lib/grafana
+        restart: always
+
+volumes:
+    grafana_storage:
+    
