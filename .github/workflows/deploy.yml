@@ -52,14 +52,17 @@ jobs:
                 oauth-client-id: ""
                 oauth-secret: ""
                 authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-                
-            - name: Deploy to debian server via ssh
-              uses: appleboy/ssh-action@v1.0.3
-              with:
-                host: ${{ secrets.SERVER_HOST }}
-                username: ${{ secrets.SERVER_USER }}
-                key: ${{ secrets.SSH_PRIVATE_KEY }}
-                script: | 
-                    docker pull ghcr.io/${{ github.repository }}:main
-                    docker rm -f test-web || true
-                    docker run -d --name test-web -p 0.0.0.0:8080:80 ghcr.io/${{ github.repository }}:main
+            - name: Setup SSH 
+              run: | 
+                mkdir -p ~/.ssh
+                echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+                chmod 600 ~/.ssh/id_ed25519
+                ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+                     
+           - name: Deploy via SSH
+                 run: |
+                   ssh -i ~/.ssh/id_ed25519 debian-server@${{ secrets.SERVER_HOST }} << 'EOF'
+                     docker pull ghcr.io/${{ github.repository }}:main
+                     docker rm -f test-web || true
+                     docker run -d --name test-web -p 0.0.0.0:8080:80 ghcr.io/${{ github.repository }}:main
+                   EOF
