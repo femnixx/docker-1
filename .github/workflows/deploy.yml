@@ -60,6 +60,6 @@ jobs:
                 username: ${{ secrets.SERVER_USER }}
                 key: ${{ secrets.SSH_PRIVATE_KEY }}
                 script: | 
-                    sudo docker pull ghcr.io/${{ github.repository }}:main
-                    sudo docker rm -f test-web || true
-                    sudo docker run -d --name test-web -p 0.0.0.0:8080:80 ghcr.io/${{ github.github.repository }}:main
+                    docker pull ghcr.io/${{ github.repository }}:main
+                    docker rm -f test-web || true
+                    docker run -d --name test-web -p 0.0.0.0:8080:80 ghcr.io/${{ github.github.repository }}:main
