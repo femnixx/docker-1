@@ -9,8 +9,16 @@ services:
             - caddy_data:/data
             - caddy_config:/config
         restart: unless-stopped
+        depends_on:
+            - api
 
+    api: 
+        build: ./api
+        restart: unless-stopped
+        volumes: 
+            - storage_data:/uploads
+            
 volumes:
     caddy_data:
     caddy_config:
-  
+    storage_data:
